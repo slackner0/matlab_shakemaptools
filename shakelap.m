@@ -1,4 +1,4 @@
-function [ mpga, number_quakes, sum_lpga, sum_pga, sum_pga_square, magnitude_map, inArea] = shakelap(grid,box,resolution,inBoxArea,breakswitch,ShakeMap,xdim,ulxmap,ulymap,ncols,res_event,magnitude)
+function [ mpga, number_quakes, sum_lpga, sum_pga, sum_pga_square, magnitude_map, inArea] = shakelap(grid,box,resolution,inBoxArea,breakswitch,ShakeMap,xdim,ulxmap,ulymap,res_event,magnitude)
 % Gives shaking summary for area
 %  INPUTS:
 %
@@ -41,6 +41,7 @@ for i=1:length(inBoxArea)
     event=inBoxArea(i);
     %map is shakemap sample
     eval(['map=ShakeMap.id' num2str(event) ';']);
+    ncols=size(map,2);
 
     % resize to correct resolution, if artifical lowering of resolution
     % to 120 was necessary, then use resizem_by_max
@@ -65,7 +66,7 @@ for i=1:length(inBoxArea)
     xdist3=b-round((180+180*breakswitch-ulxmap(event))*resolution);
 
     %sample from area grid
-    if (ulxmap(event)+xdim(event)*ncols(event)<180+breakswitch*180) % check if shakemap crosses worldborder
+    if (ulxmap(event)+xdim(event)*ncols<180+breakswitch*180) % check if shakemap crosses worldborder
         sample=grid(max(ydist+1,1):min(ydist+a,mapsize(1)),max(xdist+1,1):min(xdist+b,mapsize(2)));
     else  % Shakemap crosses world border
         if xdist>=mapsize(2) %left part of shakemap does not overlap with grid
@@ -102,6 +103,7 @@ for i=1:length(inArea)
     event=inArea(i);
     %map is shakemap sample
     eval(['map=ShakeMap.id' num2str(event) ';']);
+    ncols=size(map,2);
 
     % resize to correct resolution, if artifical lowering of resolution
     % to 120 was necessary, then use resizem_by_max
@@ -123,7 +125,7 @@ for i=1:length(inArea)
     %shakemap (if shakemap crosses world border)
     xdist2=round((box(1,1)+180-180*breakswitch)*resolution);
     xdist3=b-round((180+180*breakswitch-ulxmap(event))*resolution);
-    if (ulxmap(event)+xdim(event)*ncols(event)<180+breakswitch*180) % check if shakemap crosses worldborder
+    if (ulxmap(event)+xdim(event)*ncols<180+breakswitch*180) % check if shakemap crosses worldborder
         cross=0;
     else  % Shakemap crosses world border
         if xdist>=mapsize(2) %left part of shakemap does not overlap with grid
